@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery - Swapnapuri Sundarban</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Montserrat', Arial, sans-serif;
+      background: #f7fafc;
+      color: #222;
+    }
+    .gallery-section {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .gallery-title {
+      text-align: center;
+      font-size: 2.2rem;
+      margin-bottom: 30px;
+      font-weight: 700;
+      color: #2ecc71;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      cursor: pointer;
+      transition: transform 0.2s;
+      background: #e0e0e0;
+      display: block;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 24px rgba(44,204,113,0.15);
+    }
+    .back-btn {
+      display: inline-block;
+      margin: 32px auto 0 auto;
+      padding: 12px 32px;
+      background: #2ecc71;
+      color: #fff;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(44,204,113,0.12);
+      transition: background 0.2s;
+      text-align: center;
+    }
+    .back-btn:hover {
+      background: #27ae60;
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-section">
+    <div class="gallery-title">Full Gallery</div>
+    <div class="gallery-grid" id="galleryGrid"></div>
+    <div style="text-align:center;">
+      <a href="index.html#gallery" class="back-btn">&larr; Back to Gallery Section</a>
+    </div>
+  </div>
+  <script>
+    // List of all images in img/ folder (add more as needed)
+    const images = [
+      "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png", "8.png", "9.png", "10.png",
+      "12.png", "14.png", "15.png", "16.png", "17.png", "18.png", "19.png", "20.png", "21.png", "22.png",
+      "23.png", "24.png", "25.png", "26.png", "27.png", "28.png", "29.png", "30.png", "31.png",
+      "slide1.png", "slide2.png", "slide3.png", "slide4.png", "slide5.png", "slide6.png",
+      "room1.png", "outdoor.png",
+      // Add more if you have them
+    ];
+    const galleryGrid = document.getElementById('galleryGrid');
+    images.forEach((img, idx) => {
+      const image = document.createElement('img');
+      image.src = `img/${img}`;
+      image.alt = img;
+      image.setAttribute('data-index', idx);
+      image.addEventListener('click', function() {
+        openPreview(idx);
+      });
+      galleryGrid.appendChild(image);
+    });
+
+    // Modal preview elements
+    const modal = document.createElement('div');
+    modal.style.display = 'none';
+    modal.style.position = 'fixed';
+    modal.style.top = 0;
+    modal.style.left = 0;
+    modal.style.width = '100vw';
+    modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.85)';
+    modal.style.justifyContent = 'center';
+    modal.style.alignItems = 'center';
+    modal.style.zIndex = 9999;
+    modal.style.flexDirection = 'column';
+    modal.style.transition = 'opacity 0.2s';
+    modal.style.display = 'flex';
+    modal.style.opacity = 0;
+    modal.style.pointerEvents = 'none';
+
+    const modalImg = document.createElement('img');
+    modalImg.style.maxWidth = '90vw';
+    modalImg.style.maxHeight = '80vh';
+    modalImg.style.borderRadius = '12px';
+    modalImg.style.boxShadow = '0 4px 32px rgba(0,0,0,0.25)';
+    modalImg.style.background = '#fff';
+
+    // Arrow buttons
+    const leftArrow = document.createElement('button');
+    leftArrow.innerHTML = '&#8592;';
+    leftArrow.style.position = 'absolute';
+    leftArrow.style.left = '32px';
+    leftArrow.style.top = '50%';
+    leftArrow.style.transform = 'translateY(-50%)';
+    leftArrow.style.fontSize = '2.5rem';
+    leftArrow.style.background = 'rgba(44,204,113,0.8)';
+    leftArrow.style.color = '#fff';
+    leftArrow.style.border = 'none';
+    leftArrow.style.borderRadius = '50%';
+    leftArrow.style.width = '56px';
+    leftArrow.style.height = '56px';
+    leftArrow.style.cursor = 'pointer';
+    leftArrow.style.boxShadow = '0 2px 8px rgba(44,204,113,0.18)';
+    leftArrow.style.display = 'flex';
+    leftArrow.style.alignItems = 'center';
+    leftArrow.style.justifyContent = 'center';
+    leftArrow.style.opacity = 0.85;
+
+    const rightArrow = document.createElement('button');
+    rightArrow.innerHTML = '&#8594;';
+    rightArrow.style.position = 'absolute';
+    rightArrow.style.right = '32px';
+    rightArrow.style.top = '50%';
+    rightArrow.style.transform = 'translateY(-50%)';
+    rightArrow.style.fontSize = '2.5rem';
+    rightArrow.style.background = 'rgba(44,204,113,0.8)';
+    rightArrow.style.color = '#fff';
+    rightArrow.style.border = 'none';
+    rightArrow.style.borderRadius = '50%';
+    rightArrow.style.width = '56px';
+    rightArrow.style.height = '56px';
+    rightArrow.style.cursor = 'pointer';
+    rightArrow.style.boxShadow = '0 2px 8px rgba(44,204,113,0.18)';
+    rightArrow.style.display = 'flex';
+    rightArrow.style.alignItems = 'center';
+    rightArrow.style.justifyContent = 'center';
+    rightArrow.style.opacity = 0.85;
+
+    let currentIdx = 0;
+
+    function openPreview(idx) {
+      currentIdx = idx;
+      modalImg.src = `img/${images[currentIdx]}`;
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = 1;
+        modal.style.pointerEvents = 'auto';
+      }, 10);
+    }
+
+    function closePreview() {
+      modal.style.opacity = 0;
+      modal.style.pointerEvents = 'none';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 200);
+    }
+
+    function showPrev() {
+      currentIdx = (currentIdx - 1 + images.length) % images.length;
+      modalImg.src = `img/${images[currentIdx]}`;
+    }
+
+    function showNext() {
+      currentIdx = (currentIdx + 1) % images.length;
+      modalImg.src = `img/${images[currentIdx]}`;
+    }
+
+    leftArrow.addEventListener('click', function(e) {
+      e.stopPropagation();
+      showPrev();
+    });
+    rightArrow.addEventListener('click', function(e) {
+      e.stopPropagation();
+      showNext();
+    });
+
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closePreview();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (modal.style.display === 'flex') {
+        if (e.key === 'ArrowLeft') {
+          showPrev();
+        } else if (e.key === 'ArrowRight') {
+          showNext();
+        } else if (e.key === 'Escape') {
+          closePreview();
+        }
+      }
+    });
+
+    modal.appendChild(leftArrow);
+    modal.appendChild(modalImg);
+    modal.appendChild(rightArrow);
+    document.body.appendChild(modal);
+  </script>
+</body>
+</html>
